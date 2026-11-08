@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.svg" alt="Fraud Detection & Risk Scoring System" width="100%">
+</p>
+
 # Fraud Detection & Risk Scoring System
 
 An end-to-end machine learning application for detecting potentially fraudulent credit-card transactions, evaluating classification performance, and exploring transaction risk through an interactive Streamlit dashboard.
@@ -7,6 +11,14 @@ Built with **Python, Pandas, NumPy, Scikit-learn, Streamlit, Plotly and SQLite**
 > **Project type:** Machine Learning Portfolio Project  
 > **Dataset:** Kaggle ULB Credit Card Fraud Detection  
 > **Best model:** Logistic Regression (selected on validation PR-AUC)
+
+---
+
+## System Flow
+
+<p align="center">
+  <img src="assets/architecture.svg" alt="System architecture of the fraud detection pipeline" width="100%">
+</p>
 
 ---
 
@@ -20,7 +32,10 @@ Built with **Python, Pandas, NumPy, Scikit-learn, Streamlit, Plotly and SQLite**
 | F1-score | 8.63% |
 | ROC-AUC | 0.9820 |
 | PR-AUC | 0.7436 |
-| Random baseline PR-AUC | 0.0013 (test fraud prevalence) |
+| Specificity | 97.52% |
+| False positive rate | 2.48% |
+| Random baseline PR-AUC | 0.0013 (0.001317, test fraud prevalence) |
+| Classification threshold | 0.50 |
 
 **Test set:** 56,962 transactions, including 75 fraudulent transactions.
 
@@ -53,7 +68,9 @@ Source: [Kaggle Dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud
 | Total transactions | 284,807 |
 | Fraudulent transactions | 492 |
 | Legitimate transactions | 284,315 |
-| Features | 30 + target |
+| Features | 30 + target (31 columns) |
+| Missing values | 0 |
+| File size | ~144 MB (150,828,752 bytes) |
 | Target column | `Class` |
 
 Place the downloaded `creditcard.csv` file inside:
@@ -68,11 +85,12 @@ The raw dataset is excluded from this repository through `.gitignore`.
 
 Transactions are sorted by `Time` and divided into:
 
-| Split | Percentage |
-|---|---:|
-| Training | 60% |
-| Validation | 20% |
-| Testing | 20% |
+| Split | Share | Transactions | Fraud cases |
+|---|---:|---:|---:|
+| Training | 60% | 170,884 | 360 |
+| Validation | 20% | 56,961 | 57 |
+| Testing | 20% | 56,962 | 75 |
+| **Total** | 100% | 284,807 | 492 |
 
 This preserves temporal ordering rather than randomly distributing transactions.
 
@@ -85,17 +103,17 @@ This preserves temporal ordering rather than randomly distributing transactions.
 
 ### 3. Model Comparison
 
-Three classification algorithms were evaluated:
+Three classification algorithms were evaluated on the validation set:
 
-| Model | Validation PR-AUC |
-|---|---:|
-| Logistic Regression | 0.771877 |
-| Random Forest | 0.747472 |
-| Decision Tree | 0.590523 |
+| Model | PR-AUC | ROC-AUC | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|---:|
+| **Logistic Regression** | **0.7719** | 0.9709 | 0.0270 | 0.8947 | 0.0524 |
+| Random Forest | 0.7475 | 0.9379 | 0.9512 | 0.6842 | 0.7959 |
+| Decision Tree | 0.5905 | 0.8841 | 0.0507 | 0.7719 | 0.0952 |
 
 **Selected model: Logistic Regression**
 
-Selection was based on validation PR-AUC.
+Selection was based on validation PR-AUC, which is threshold-independent. At the fixed 0.50 threshold, Random Forest shows much higher validation precision but lower recall, so the model ranking depends on the metric and operating threshold used. This is why threshold optimization with explicit business costs is listed as future work.
 
 ### 4. Final Test Evaluation
 
@@ -105,6 +123,8 @@ The validation-selected model was evaluated once on the held-out chronological t
 |---|---:|---:|
 | Legitimate | 55,477 | 1,410 |
 | Fraud | 8 | 67 |
+
+True negatives 55,477 · false positives 1,410 · false negatives 8 · true positives 67.
 
 The results demonstrate high fraud recall but relatively low precision, indicating a substantial false-positive alert burden.
 
@@ -138,6 +158,7 @@ fraud-detection-risk-scoring/
 │
 ├── data/
 │   ├── raw/
+│   │   └── creditcard.csv          # not committed (.gitignore)
 │   └── processed/
 │
 ├── database/
@@ -147,34 +168,44 @@ fraud-detection-risk-scoring/
 │   └── INTERVIEW_GUIDE.md
 │
 ├── models/
+│   ├── best_model.joblib
 │   └── model_metadata.json
 │
 ├── notebooks/
-│   └── 01_fraud_detection_eda.ipynb
+│   ├── 01_fraud_detection_eda.ipynb
+│   └── README.md
 │
 ├── reports/
 │   ├── figures/
+│   │   ├── confusion_matrix.png
+│   │   ├── precision_recall_curve.png
+│   │   └── roc_curve.png
+│   ├── classification_report.txt
 │   ├── evaluation_report.md
 │   ├── metrics.json
-│   └── model_comparison.csv
+│   ├── model_comparison.csv
+│   ├── split_summary.csv
+│   └── test_predictions.csv
 │
 ├── src/
 │   └── fraud/
+│       ├── __init__.py
 │       ├── config.py
 │       ├── data.py
-│       ├── database.py
+│       ├── split.py
+│       ├── preprocessing.py
+│       ├── train.py
 │       ├── evaluate.py
 │       ├── predict.py
-│       ├── preprocessing.py
 │       ├── risk_scoring.py
-│       ├── split.py
-│       ├── sql_analytics.py
-│       └── train.py
+│       ├── database.py
+│       └── sql_analytics.py
 │
 ├── tests/
 │   ├── conftest.py
 │   └── test_core.py
 │
+├── .gitignore
 ├── MODEL_CARD.md
 ├── PROGRESS.md
 ├── README.md
