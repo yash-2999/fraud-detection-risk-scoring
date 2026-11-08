@@ -1,0 +1,26 @@
+random_state: 42
+split:
+  train: 0.60
+  validation: 0.20
+  test: 0.20
+threshold: 0.50
+risk_bands:
+  low: 0.10
+  medium: 0.30
+  high: 0.70
+models:
+  logistic_regression:
+    max_iter: 500
+    class_weight: balanced
+    C: 1.0
+  decision_tree:
+    max_depth: 8
+    min_samples_split: 20
+    min_samples_leaf: 10
+    class_weight: balanced
+  random_forest:
+    n_estimators: 60
+    max_depth: 12
+    min_samples_split: 10
+    min_samples_leaf: 3
+    class_weight: balanced_subsample

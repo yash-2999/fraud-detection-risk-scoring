@@ -1,0 +1,41 @@
+
+# Virtual environments
+.venv/
+.venv-1/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Raw and processed datasets
+data/raw/*.csv
+data/processed/*
+
+# Generated model artifacts
+models/*.joblib
+models/*.pkl
+
+# Database files
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+
+# Generated report figures
+reports/figures/*.png
+
+# Logs
+*.log
